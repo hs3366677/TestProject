@@ -19,8 +19,8 @@ public class Main : MonoBehaviour
     GameObject blockTemplate;
     GameObject agentTemplate1, agentTemplate2;
     // Use this for initialization
-	
-	TestLine
+	aswert
+    125214
 	
     void Start()
     {
