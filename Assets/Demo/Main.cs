@@ -17,18 +17,19 @@ public class Main : MonoBehaviour
     public float cameraMoveSpeed = 2;
     BitArray bitArray;
     GameObject blockTemplate;
-    GameObject agentTemplate;
+    GameObject agentTemplate1, agentTemplate2;
     // Use this for initialization
 
     void Start()
     {
         blocks = new Dictionary<int, GameObject>();
         bitArray = new BitArray(unitRowNum * unitColumnNum);
-        mCamera.fieldOfView = unitLength * unitRowNum / 2;
+        mCamera.fieldOfView = unitLength * unitRowNum / 2 * 2;
         cube.transform.localScale = new Vector3(unitLength * unitColumnNum, 1, unitLength * unitRowNum);
         navMesh.BuildNavMesh();
         blockTemplate = Resources.Load("BlockWithNavmeshVolume") as GameObject;
-        agentTemplate = Resources.Load("Agent") as GameObject;
+        agentTemplate1 = Resources.Load("Agent") as GameObject;
+        agentTemplate2 = Resources.Load("AgentBig") as GameObject;
         //ground height 0.5
         destinationWorld = Index2World(destination.x, destination.y, 0.5f);
         agentSet = new HashSet<NavMeshAgent>();
@@ -44,8 +45,9 @@ public class Main : MonoBehaviour
     {
         foreach (var agent in agentSet)
         {
-            if (agent.remainingDistance < agent.stoppingDistance)
+            if (agent.remainingDistance < agent.stoppingDistance && agent.hasPath)
             {
+                Debug.Log(agent.name + " remaining distance = " + agent.remainingDistance + " destination = " + agent.destination + " has path " + agent.hasPath); 
                 deleteSet.Add(agent);
             }
         }
@@ -77,9 +79,12 @@ public class Main : MonoBehaviour
         {
             Vector3 worldMousePosition = mCamera.ScreenToWorldPoint(Input.mousePosition);
             worldMousePosition.y = 0.5f;
-            GameObject obj = Instantiate(agentTemplate, worldMousePosition, Quaternion.Euler(Vector3.zero)) as GameObject;
+
+            
+            GameObject obj = Instantiate(Random.value > 0.8f ? agentTemplate2 : agentTemplate1, worldMousePosition, Quaternion.Euler(Vector3.zero)) as GameObject;
             NavMeshAgent agent = obj.GetComponent<NavMeshAgent>();
             agent.SetDestination(destinationWorld);
+            agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
             agentSet.Add(agent);
         }
 
@@ -160,17 +165,19 @@ public class Main : MonoBehaviour
     {
         if (GUI.Button(new Rect(20, 40, 80, 20), "Produce"))
         {
-
-            Vector3 basePosition = Index2World(5, 0, 0.5f);
-            for (int i = -20; i < 20; i++){
-                for (int j = -20; j< 20; j++){
-                    GameObject obj = Instantiate(agentTemplate, basePosition + new Vector3(i * 0.02f, 0, j * 0.02f), Quaternion.Euler(Vector3.zero)) as GameObject;
+            Vector3 basePosition = Index2World(5, 5, 0.5f);
+            for (int i = -1; i < 1; i++)
+            {
+                for (int j = -1; j < 1; j++)
+                {
+                    GameObject obj = Instantiate(agentTemplate1, basePosition + new Vector3(i * 0.2f, 0, j * 0.2f), Quaternion.Euler(Vector3.zero)) as GameObject;
+                    obj.name = string.Format("Agent({0})({1})", i, j);
                     NavMeshAgent agent = obj.GetComponent<NavMeshAgent>();
                     agent.SetDestination(destinationWorld);
                     agentSet.Add(agent);
                 }
             }
-        
+
         }
     }
 }
