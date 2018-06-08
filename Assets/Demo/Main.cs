@@ -19,7 +19,9 @@ public class Main : MonoBehaviour
     GameObject blockTemplate;
     GameObject agentTemplate1, agentTemplate2;
     // Use this for initialization
-
+	
+	TestLine
+	
     void Start()
     {
         blocks = new Dictionary<int, GameObject>();
