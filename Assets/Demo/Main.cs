@@ -20,7 +20,7 @@ public class Main : MonoBehaviour
     GameObject agentTemplate1, agentTemplate2;
     // Use this for initialization
 	
-	TestLine
+	i HAVE CHANGE TOO HERE
 	
     void Start()
     {
